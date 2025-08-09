@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Queremos ouvir você — Pesquisa rápida</title>
+  <style>
+    :root {
+      --bg:#f8fafc;          /* page background */
+      --card:#ffffff;        /* card background */
+      --muted:#6b7280;       /* muted text */
+      --text:#111827;        /* primary text */
+      --brand:#22c55e;       /* accent green */
+      --warn:#ef4444;        /* warn red */
+      --line:#e5e7eb;        /* borders */
+      --shadow:0 6px 20px rgba(2,8,20,.06);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font:17px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial;
+      background:var(--bg); color:var(--text);
+    }
+    .wrap{max-width:820px;margin:40px auto;padding:0 20px}
+    h1{font-size:30px;margin:0 0 6px}
+    h2{font-size:20px;margin:22px 0 10px}
+    p.lead{color:var(--muted);margin:0 0 16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:16px 0;box-shadow:var(--shadow)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media (max-width:780px){.row{grid-template-columns:1fr}}
+    label,input,textarea{cursor:pointer}
+    input[type="text"], input[type="email"], textarea{
+      width:100%; background:#ffffff; color:var(--text);
+      border:1px solid var(--line); border-radius:12px; padding:12px 12px;
+      box-shadow:0 1px 0 rgba(2,8,20,.02);
+    }
+    input[type="text"]:focus, input[type="email"]:focus, textarea:focus{
+      outline:none; border-color:var(--brand);
+      box-shadow:0 0 0 4px rgba(34,197,94,.15);
+    }
+    input[type="checkbox"]{accent-color:var(--brand)}
+    .muted{color:var(--muted)}
+    .hint{font-size:12px;color:var(--muted);margin-top:4px}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:#f9fafb}
+    .btnbar{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+    button{border:0;border-radius:12px;padding:12px 16px;font-weight:600;transition:.15s ease}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .primary{background:var(--brand);color:#064e3b}
+    .primary:hover{filter:brightness(.98)}
+    .ghost{background:#ffffff;border:1px solid var(--line);color:var(--text)}
+    .ghost:hover{background:#f9fafb}
+    .error{color:#b91c1c;font-size:13px;margin-top:6px;display:none}
+    .odi-grid{width:100%;border-collapse:collapse;margin:24px 0}
+    .odi-grid thead th{
+      background:#f8fafc;border-bottom:2px solid var(--line);padding:16px 12px;
+      font-size:14px;color:var(--text);font-weight:600;text-align:center;vertical-align:bottom
+    }
+    .odi-grid thead th:first-child{text-align:left;padding-left:20px}
+    .odi-grid tbody tr{border-bottom:1px solid #f1f5f9}
+    .odi-grid tbody tr:hover{background:#fafbfc}
+    .odi-grid tbody td{padding:16px 12px;vertical-align:middle;border-right:1px solid #f1f5f9}
+    .odi-grid tbody td:first-child{
+      padding-left:20px;font-weight:500;color:var(--text);width:40%;border-right:1px solid #e2e8f0
+    }
+    .odi-grid tbody td:last-child{border-right:none}
+    
+    .scale-header{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .scale-labels{display:flex;justify-content:space-between;width:100%;font-size:11px;color:var(--muted);margin-top:4px}
+    .scale-numbers{display:flex;justify-content:space-between;width:100%;font-size:12px;color:var(--muted);font-weight:500}
+    
+    .radio-group{display:flex;justify-content:space-between;align-items:center;min-width:180px}
+    .radio-group label{position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px}
+    .radio-group input[type="radio"]{position:absolute;opacity:0;cursor:pointer}
+    .radio-group .checkmark{
+      height:20px;width:20px;background-color:#ffffff;border:2px solid #d1d5db;border-radius:50%;
+      transition:all 0.2s ease;display:flex;align-items:center;justify-content:center
+    }
+    .radio-group label:hover .checkmark{border-color:#9ca3af;background-color:#f9fafb}
+    .radio-group input:checked ~ .checkmark{background-color:var(--brand);border-color:var(--brand)}
+    .radio-group input:checked ~ .checkmark:after{
+      content:"";width:8px;height:8px;border-radius:50%;background:#ffffff
+    }
+    .radio-group input:focus ~ .checkmark{box-shadow:0 0 0 3px rgba(34,197,94,0.1)}
+
+    .progress.card{padding:16px 16px 18px}
+    .prog-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+    .progressbar{height:10px;background:#f3f4f6;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+    .progressbar .bar{height:100%;width:0;background:linear-gradient(90deg,var(--brand),#16a34a);transition:width .25s ease}
+    .other-wrap{display:none;margin-top:8px}
+    .footer-nav{display:flex;gap:10px;justify-content:flex-end;align-items:center;position:sticky;bottom:12px;z-index:5}
+    .odi-scales .na span{background:#f3f4f6;color:#374151}
+    .scale-numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:4px;color:var(--muted);font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Queremos ouvir você</h1>
+    <p class="lead">Leva cerca de 3 minutos. Conte como você resolve hoje, o que é mais importante para você e o que podemos melhorar. Suas respostas guiam nossas próximas melhorias.</p>
+
+    <div class="card progress">
+      <div class="prog-header">
+        <div id="progText" class="muted">Etapa 1/6 — Contato</div>
+      </div>
+      <div class="progressbar"><div class="bar" id="progBar"></div></div>
+    </div>
+
+    <form id="survey" novalidate>
+      <!-- CONTATO simples -->
+      <section class="card step" data-title="Contato" data-key="contato">
+        <h2>Contato</h2>
+        <label class="muted">E‑mail ou WhatsApp *</label>
+        <input type="text" name="contact" placeholder="voce@exemplo.com ou +55 11 9XXXX-XXXX" required />
+        <div class="hint">Usaremos apenas para retornar os resultados/convite de entrevistas.</div>
+        <div id="e-contact" class="error">Informe um contato válido (e‑mail ou WhatsApp).</div>
+      </section>
+
+      <!-- SOLUÇÕES QUE USA HOJE -->
+      <section class="card step" data-title="Soluções" data-key="tools">
+        <h2>Como você resolve hoje?</h2>
+        <div class="row">
+          <div class="odi-item"><label><input type="checkbox" name="tools" value="plantix"> Plantix</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="tools" value="outros-apps" data-other="#other-tools-apps"> Outro(s) app(s)</label>
+            <div class="other-wrap" id="other-tools-apps"><input type="text" placeholder="Quais apps?" /></div>
+          </div>
+          <div class="odi-item"><label><input type="checkbox" name="tools" value="google"> Google/YouTube</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="tools" value="grupos"> Grupos WhatsApp/Facebook</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="tools" value="tecnico"> Técnico(a)/Agrônomo(a)</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="tools" value="experiencia"> Experiência própria</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="tools" value="outro" data-other="#other-tools-free"> Outro</label>
+            <div class="other-wrap" id="other-tools-free"><input type="text" placeholder="Descreva outra forma" /></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GANHOS (ODI: Importância x Satisfação) -->
+      <section class="card step" data-title="Ganhos" data-key="gains">
+        <h2>Ganhos desejados</h2>
+        <table class="odi-grid">
+          <thead>
+            <tr>
+              <th style="text-align:left">Ganho</th>
+              <th>
+                Importância
+                <div class="scale-legend head"><span>Baixa</span><span>Alta</span></div>
+                <div class="scale-numbers"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+              </th>
+              <th>
+                Satisfação
+                <div class="scale-legend head"><span>Baixa</span><span>Alta</span></div>
+                <div class="scale-numbers"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="odi-gains"></tbody>
+        </table>
+        <div class="other-wrap" id="gains-extra-wrap" style="display:block;margin-top:12px">
+          <label class="muted">Outro ganho (opcional)</label>
+          <div class="row">
+            <input type="text" id="gains-extra-text" placeholder="Descreva o ganho"/>
+            <div>
+              <div class="hint">Importância</div>
+              <div id="gains-extra-imp" class="odi-scales"></div>
+            </div>
+            <div>
+              <div class="hint">Satisfação</div>
+              <div id="gains-extra-sat" class="odi-scales"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DORES (ODI) -->
+      <section class="card step" data-title="Dores" data-key="pains">
+        <h2>Dores/obstáculos</h2>
+        <table class="odi-grid">
+          <thead>
+            <tr><th style="text-align:left">Dor</th><th>Importância (1–5)</th><th>Satisfação (1–5)</th></tr>
+          </thead>
+          <tbody id="odi-pains"></tbody>
+        </table>
+        <div class="other-wrap" id="pains-extra-wrap" style="display:block;margin-top:12px">
+          <label class="muted">Outra dor (opcional)</label>
+          <div class="row">
+            <input type="text" id="pains-extra-text" placeholder="Descreva a dor"/>
+            <div>
+              <div class="hint">Importância</div>
+              <div id="pains-extra-imp" class="odi-scales"></div>
+            </div>
+            <div>
+              <div class="hint">Satisfação</div>
+              <div id="pains-extra-sat" class="odi-scales"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAREFAS (ODI) -->
+      <section class="card step" data-title="Tarefas" data-key="jobs">
+        <h2>Tarefas do dia a dia</h2>
+        <table class="odi-grid">
+          <thead>
+            <tr><th style="text-align:left">Tarefa</th><th>Importância (1–5)</th><th>Satisfação (1–5)</th></tr>
+          </thead>
+        <tbody id="odi-jobs"></tbody>
+        </table>
+        <div class="other-wrap" id="jobs-extra-wrap" style="display:block;margin-top:12px">
+          <label class="muted">Outra tarefa (opcional)</label>
+          <div class="row">
+            <input type="text" id="jobs-extra-text" placeholder="Descreva a tarefa"/>
+            <div>
+              <div class="hint">Importância</div>
+              <div id="jobs-extra-imp" class="odi-scales"></div>
+            </div>
+            <div>
+              <div class="hint">Satisfação</div>
+              <div id="jobs-extra-sat" class="odi-scales"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREFERÊNCIAS & ENVIO -->
+      <section class="card step" data-title="Preferências" data-key="prefs">
+        <h2>Preferências e comentários</h2>
+        <label class="muted">Quais melhorias você quer ver primeiro? <span class="hint">(até 2)</span></label>
+        <div class="row">
+          <div class="odi-item"><label><input type="checkbox" name="prio" value="culturas"> Mais culturas</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="prio" value="reconhecimento"> Melhor reconhecimento de imagem</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="prio" value="tratamento-local"> Tratamentos locais/biológicos</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="prio" value="comunidade"> Comunidade responde mais rápido</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="prio" value="usabilidade"> Melhorias de usabilidade/iOS</label></div>
+          <div class="odi-item"><label><input type="checkbox" name="prio" value="outro" data-other="#other-prefs"> Outro</label>
+            <div class="other-wrap" id="other-prefs"><input type="text" placeholder="Qual melhoria?" /></div>
+          </div>
+        </div>
+        <h3>Comentários (opcional)</h3>
+        <textarea name="open" rows="5" placeholder="Conte um caso recente ou algo que faria você trocar de solução..."></textarea>
+
+        <div class="btnbar">
+          <button type="submit" class="primary">Enviar respostas</button>
+        </div>
+        <div id="submitMsg" class="hint"></div>
+
+        <details style="margin-top:12px">
+          <summary class="muted">Configuração (opcional) — enviar para webhook (n8n / Apps Script)</summary>
+          <p class="hint">Informe uma URL e enviaremos um <code>POST application/json</code> com todas as respostas.</p>
+          <input id="endpoint" class="odi-item" placeholder="https://seu-webhook-exemplo..." />
+        </details>
+      </section>
+    </form>
+
+    <div class="card footer-nav">
+      <div style="flex:1"></div>
+      <button id="btnBack" type="button" class="ghost" onclick="back()">Voltar</button>
+      <button id="btnNext" type="button" class="primary" onclick="next()">Avançar</button>
+    </div>
+  </div>
+
+  <script>
+    // ---------- ITENS ----------
+    const GAINS = [
+      "Diagnóstico rápido (<30s) e preciso",
+      "Interface simples e fácil de usar",
+      "Comunidade engajada (respostas confiáveis e rápidas)",
+      "Conteúdo prático extra (dicas, fertilizantes, clima)",
+      "Redução de perdas / maior produtividade"
+    ];
+    const PAINS = [
+      "Falta de culturas importantes para mim",
+      "Foto não reconhecida/‘desfocada’",
+      "Tratamentos não aplicáveis/indisponíveis na minha região",
+      "Fricções de uso (editar/adicionar, limite de culturas, iOS/permissões)",
+      "Perguntas sem resposta na comunidade"
+    ];
+    const JOBS = [
+      "Diagnosticar rapidamente a causa do problema na planta",
+      "Receber orientação clara de tratamento/prevenção adequada à minha região",
+      "Aprender boas práticas de manejo/nutrição",
+      "Tirar dúvidas com pessoas experientes",
+      "Acompanhar previsão do tempo/alertas relevantes"
+    ];
+
+    // ---------- UI HELPERS ----------
+    const steps = [...document.querySelectorAll('.step')];
+    let current = 0; // 0: contato, 1: tools, 2: gains, 3: pains, 4: jobs, 5: prefs
+    const progText = document.getElementById('progText');
+
+    function renderOdiRows(containerId, key, items){
+      const tbody = document.getElementById(containerId);
+      items.forEach((txt, i)=>{
+        const tr = document.createElement('tr');
+        const nameImp = `${key}-imp-${i}`;
+        const nameSat = `${key}-sat-${i}`;
+        tr.innerHTML = `
+          <td class="odi-item">${txt}</td>
+          <td>
+            <div class="odi-scales">
+              ${[1,2,3,4,5].map(v=>`<label><input type=\"radio\" name=\"${nameImp}\" value=\"${v}\"><span></span></label>`).join('')}
+            </div>
+          </td>
+          <td>
+            <div class="odi-scales">
+              ${[1,2,3,4,5].map(v=>`<label><input type=\"radio\" name=\"${nameSat}\" value=\"${v}\"><span></span></label>`).join('')}
+            </div>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderExtraScales(containerId){
+      const el = document.getElementById(containerId);
+      el.innerHTML = [1,2,3,4,5].map(v=>`<label><input type=\"radio\" value=\"${v}\"><span>${v}</span></label>`).join('');
+    }
+
+    renderOdiRows('odi-gains','gains',GAINS);
+    renderOdiRows('odi-pains','pains',PAINS);
+    renderOdiRows('odi-jobs','jobs',JOBS);
+    ['gains-extra-imp','gains-extra-sat','pains-extra-imp','pains-extra-sat','jobs-extra-imp','jobs-extra-sat'].forEach(renderExtraScales);
+
+    function showStep(i){
+      steps.forEach((s, idx)=> s.style.display = (idx===i) ? 'block' : 'none');
+      current = i;
+      const titles = steps.map(s=>s.dataset.title);
+      const total = steps.length;
+      const stepNum = Math.min(i+1,total);
+      progText.textContent = `Etapa ${stepNum}/${total} — ${titles[i]}`;
+      const pct = Math.round(((stepNum-1)/(total-1)) * 100);
+      const bar = document.getElementById('progBar');
+      if(bar) bar.style.width = pct + '%';
+      const bNext = document.getElementById('btnNext');
+      const bBack = document.getElementById('btnBack');
+      if(bBack) bBack.disabled = (i===0);
+      if(bNext) bNext.disabled = (i===total-1);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function next(){ if(current < steps.length-1) showStep(current+1); }
+    function back(){ if(current>0) showStep(current-1); }
+    window.next = next; window.back = back;
+
+    // Mostrar inputs "Outro" quando selecionados
+    document.body.addEventListener('change', (e)=>{
+      const t = e.target;
+      if(t.matches('input[type="checkbox"][data-other]')){
+        const target = document.querySelector(t.getAttribute('data-other'));
+        if(target) target.style.display = t.checked ? 'block' : 'none';
+      }
+    });
+
+    function collectOther(selector){
+      const el = document.querySelector(selector);
+      if(!el) return '';
+      const inp = el.querySelector('input[type="text"]');
+      return (inp?.value||'').trim();
+    }
+
+    // ---------- CAPTURE ----------
+    function collectODI(prefix, items){
+      const res = {};
+      items.forEach((txt, i)=>{
+        const imp = document.querySelector(`input[name="${prefix}-imp-${i}"]:checked`);
+        const sat = document.querySelector(`input[name="${prefix}-sat-${i}"]:checked`);
+        res[txt] = {importance: imp? Number(imp.value): null, satisfaction: sat? Number(sat.value): null};
+      });
+      return res;
+    }
+
+    function valExtra(impId, satId){
+      const imp = document.querySelector(`#${impId} input:checked`);
+      const sat = document.querySelector(`#${satId} input:checked`);
+      return {importance: imp? Number(imp.value): null, satisfaction: sat? Number(sat.value): null};
+    }
+
+    function formData(){
+      return {
+        ts: new Date().toISOString(),
+        contact: (document.querySelector('input[name="contact"]').value||'').trim(),
+        tools: {
+          selected: [...document.querySelectorAll('input[name="tools"]:checked')].map(x=>x.value),
+          other_apps: collectOther('#other-tools-apps'),
+          other_free: collectOther('#other-tools-free')
+        },
+        odi: {
+          gains: collectODI('gains', GAINS),
+          pains: collectODI('pains', PAINS),
+          jobs: collectODI('jobs', JOBS),
+          gains_extra: {label: (document.getElementById('gains-extra-text').value||'').trim(), ...valExtra('gains-extra-imp','gains-extra-sat')},
+          pains_extra: {label: (document.getElementById('pains-extra-text').value||'').trim(), ...valExtra('pains-extra-imp','pains-extra-sat')},
+          jobs_extra: {label: (document.getElementById('jobs-extra-text').value||'').trim(), ...valExtra('jobs-extra-imp','jobs-extra-sat')}
+        },
+        priorities: {
+          selected: [...document.querySelectorAll('input[name="prio"]:checked')].map(x=>x.value),
+          other: collectOther('#other-prefs')
+        },
+        open: (document.querySelector('textarea[name="open"]').value||'').trim(),
+        client: { ua: navigator.userAgent }
+      };
+    }
+
+    function validContact(str){
+      if(!str) return false;
+      const s = str.trim();
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+      const digits = s.replace(/\D/g,'');
+      const isPhone = digits.length>=8 && digits.length<=16;
+      return isEmail || isPhone;
+    }
+
+    // ---------- SUBMIT (validação mínima de contato) ----------
+    document.getElementById('survey').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const contact = (document.querySelector('input[name="contact"]').value||'').trim();
+      const msg = document.getElementById('submitMsg');
+      if(!validContact(contact)){
+        document.getElementById('e-contact').style.display = 'block';
+        showStep(0); return;
+      } else {
+        document.getElementById('e-contact').style.display = 'none';
+      }
+
+      const payload = formData();
+      const endpoint = (document.getElementById('endpoint')?.value||'').trim();
+      if(!endpoint){ msg.textContent = 'Sem endpoint definido. Configure um webhook para enviar as respostas.'; return; }
+      try{
+        const res = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        msg.textContent = 'Enviado com sucesso ✔';
+        msg.className = 'hint';
+      }catch(err){ msg.textContent = 'Falha ao enviar. Verifique o endpoint e tente novamente.'; }
+    });
+
+    // Init (começa direto)
+    showStep(0);
+  </script>
+</body>
+</html>
