@@ -158,20 +158,7 @@
           </thead>
           <tbody id="odi-gains"></tbody>
         </table>
-        <div class="other-wrap" id="gains-extra-wrap" style="display:block;margin-top:12px">
-          <label class="muted">Outro ganho (opcional)</label>
-          <div class="row">
-            <input type="text" id="gains-extra-text" placeholder="Descreva o ganho"/>
-            <div>
-              <div class="hint">Importância</div>
-              <div id="gains-extra-imp" class="odi-scales"></div>
-            </div>
-            <div>
-              <div class="hint">Satisfação</div>
-              <div id="gains-extra-sat" class="odi-scales"></div>
-            </div>
-          </div>
-        </div>
+
       </section>
 
       <!-- DORES (ODI) -->
@@ -199,20 +186,7 @@
           </thead>
           <tbody id="odi-pains"></tbody>
         </table>
-        <div class="other-wrap" id="pains-extra-wrap" style="display:block;margin-top:12px">
-          <label class="muted">Outra dor (opcional)</label>
-          <div class="row">
-            <input type="text" id="pains-extra-text" placeholder="Descreva a dor"/>
-            <div>
-              <div class="hint">Importância</div>
-              <div id="pains-extra-imp" class="odi-scales"></div>
-            </div>
-            <div>
-              <div class="hint">Satisfação</div>
-              <div id="pains-extra-sat" class="odi-scales"></div>
-            </div>
-          </div>
-        </div>
+
       </section>
 
       <!-- TAREFAS (ODI) -->
@@ -240,20 +214,7 @@
           </thead>
           <tbody id="odi-jobs"></tbody>
         </table>
-        <div class="other-wrap" id="jobs-extra-wrap" style="display:block;margin-top:12px">
-          <label class="muted">Outra tarefa (opcional)</label>
-          <div class="row">
-            <input type="text" id="jobs-extra-text" placeholder="Descreva a tarefa"/>
-            <div>
-              <div class="hint">Importância</div>
-              <div id="jobs-extra-imp" class="odi-scales"></div>
-            </div>
-            <div>
-              <div class="hint">Satisfação</div>
-              <div id="jobs-extra-sat" class="odi-scales"></div>
-            </div>
-          </div>
-        </div>
+
       </section>
 
       <!-- PREFERÊNCIAS & ENVIO -->
@@ -278,11 +239,7 @@
         </div>
         <div id="submitMsg" class="hint"></div>
 
-        <details style="margin-top:12px">
-          <summary class="muted">Configuração (opcional) — enviar para webhook (n8n / Apps Script)</summary>
-          <p class="hint">Informe uma URL e enviaremos um <code>POST application/json</code> com todas as respostas.</p>
-          <input id="endpoint" class="odi-item" placeholder="https://seu-webhook-exemplo..." />
-        </details>
+
       </section>
     </form>
 
@@ -367,7 +324,7 @@
     renderOdiRows('odi-gains','gains',GAINS);
     renderOdiRows('odi-pains','pains',PAINS);
     renderOdiRows('odi-jobs','jobs',JOBS);
-    ['gains-extra-imp','gains-extra-sat','pains-extra-imp','pains-extra-sat','jobs-extra-imp','jobs-extra-sat'].forEach(renderExtraScales);
+
 
     function showStep(i){
       steps.forEach((s, idx)=> s.style.display = (idx===i) ? 'block' : 'none');
@@ -435,10 +392,7 @@
         odi: {
           gains: collectODI('gains', GAINS),
           pains: collectODI('pains', PAINS),
-          jobs: collectODI('jobs', JOBS),
-          gains_extra: {label: (document.getElementById('gains-extra-text').value||'').trim(), ...valExtra('gains-extra-imp','gains-extra-sat')},
-          pains_extra: {label: (document.getElementById('pains-extra-text').value||'').trim(), ...valExtra('pains-extra-imp','pains-extra-sat')},
-          jobs_extra: {label: (document.getElementById('jobs-extra-text').value||'').trim(), ...valExtra('jobs-extra-imp','jobs-extra-sat')}
+          jobs: collectODI('jobs', JOBS)
         },
         priorities: {
           selected: [...document.querySelectorAll('input[name="prio"]:checked')].map(x=>x.value),
@@ -471,14 +425,9 @@
       }
 
       const payload = formData();
-      const endpoint = (document.getElementById('endpoint')?.value||'').trim();
-      if(!endpoint){ msg.textContent = 'Sem endpoint definido. Configure um webhook para enviar as respostas.'; return; }
-      try{
-        const res = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-        if(!res.ok) throw new Error('HTTP '+res.status);
-        msg.textContent = 'Enviado com sucesso ✔';
-        msg.className = 'hint';
-      }catch(err){ msg.textContent = 'Falha ao enviar. Verifique o endpoint e tente novamente.'; }
+      console.log('Dados da pesquisa:', payload);
+      msg.textContent = 'Pesquisa concluída! Obrigado pela participação ✔';
+      msg.className = 'hint';
     });
 
     // Init (começa direto)
