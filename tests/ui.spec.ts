@@ -14,11 +14,11 @@ test.describe('Survey UI basics', () => {
     await expect(page.getByText('Ganhos desejados')).toBeVisible();
 
     // Click Importance = 4 for first row via the label (not the radio itself)
-    await page.locator('#odi-gains tr:nth-of-type(1) td:nth-of-type(2) .odi-scales label:nth-of-type(4) span').click();
+    await page.locator('#odi-gains tr:nth-of-type(1) td:nth-of-type(2) .radio-group label:nth-of-type(4) .checkmark').click();
     await expect(page.locator('input[name="gains-imp-0"][value="4"]')).toBeChecked();
 
     // Click Satisfaction = 5 for first row
-    await page.locator('#odi-gains tr:nth-of-type(1) td:nth-of-type(3) .odi-scales label:nth-of-type(5) span').click();
+    await page.locator('#odi-gains tr:nth-of-type(1) td:nth-of-type(3) .radio-group label:nth-of-type(5) .checkmark').click();
     await expect(page.locator('input[name="gains-sat-0"][value="5"]')).toBeChecked();
 
     // Progress bar should advance when navigating

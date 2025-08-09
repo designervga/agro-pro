@@ -70,7 +70,7 @@
     
     .radio-group{display:flex;justify-content:space-between;align-items:center;min-width:180px}
     .radio-group label{position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;width:32px;height:32px}
-    .radio-group input[type="radio"]{position:absolute;opacity:0;cursor:pointer}
+    .radio-group input[type="radio"]{position:absolute;opacity:0;cursor:pointer;pointer-events:none}
     .radio-group .checkmark{
       height:20px;width:20px;background-color:#ffffff;border:2px solid #d1d5db;border-radius:50%;
       transition:all 0.2s ease;display:flex;align-items:center;justify-content:center
@@ -88,8 +88,9 @@
     .progressbar .bar{height:100%;width:0;background:linear-gradient(90deg,var(--brand),#16a34a);transition:width .25s ease}
     .other-wrap{display:none;margin-top:8px}
     .footer-nav{display:flex;gap:10px;justify-content:flex-end;align-items:center;position:sticky;bottom:12px;z-index:5}
-    .odi-scales .na span{background:#f3f4f6;color:#374151}
-    .scale-numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:4px;color:var(--muted);font-size:12px}
+    .odi-item{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#f9fafb}
+    .row .odi-item{cursor:pointer}
+    .row .odi-item label{display:flex;align-items:center;gap:10px;width:100%}
   </style>
 </head>
 <body>
@@ -178,7 +179,23 @@
         <h2>Dores/obstáculos</h2>
         <table class="odi-grid">
           <thead>
-            <tr><th style="text-align:left">Dor</th><th>Importância (1–5)</th><th>Satisfação (1–5)</th></tr>
+            <tr>
+              <th>Dor</th>
+              <th>
+                <div class="scale-header">
+                  <span>Importância</span>
+                  <div class="scale-labels"><span>Baixa</span><span>Alta</span></div>
+                  <div class="scale-numbers"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+                </div>
+              </th>
+              <th>
+                <div class="scale-header">
+                  <span>Satisfação</span>
+                  <div class="scale-labels"><span>Baixa</span><span>Alta</span></div>
+                  <div class="scale-numbers"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+                </div>
+              </th>
+            </tr>
           </thead>
           <tbody id="odi-pains"></tbody>
         </table>
@@ -203,9 +220,25 @@
         <h2>Tarefas do dia a dia</h2>
         <table class="odi-grid">
           <thead>
-            <tr><th style="text-align:left">Tarefa</th><th>Importância (1–5)</th><th>Satisfação (1–5)</th></tr>
+            <tr>
+              <th>Tarefa</th>
+              <th>
+                <div class="scale-header">
+                  <span>Importância</span>
+                  <div class="scale-labels"><span>Baixa</span><span>Alta</span></div>
+                  <div class="scale-numbers"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+                </div>
+              </th>
+              <th>
+                <div class="scale-header">
+                  <span>Satisfação</span>
+                  <div class="scale-labels"><span>Baixa</span><span>Alta</span></div>
+                  <div class="scale-numbers"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+                </div>
+              </th>
+            </tr>
           </thead>
-        <tbody id="odi-jobs"></tbody>
+          <tbody id="odi-jobs"></tbody>
         </table>
         <div class="other-wrap" id="jobs-extra-wrap" style="display:block;margin-top:12px">
           <label class="muted">Outra tarefa (opcional)</label>
@@ -296,15 +329,25 @@
         const nameImp = `${key}-imp-${i}`;
         const nameSat = `${key}-sat-${i}`;
         tr.innerHTML = `
-          <td class="odi-item">${txt}</td>
+          <td>${txt}</td>
           <td>
-            <div class="odi-scales">
-              ${[1,2,3,4,5].map(v=>`<label><input type=\"radio\" name=\"${nameImp}\" value=\"${v}\"><span></span></label>`).join('')}
+            <div class="radio-group">
+              ${[1,2,3,4,5].map(v=>`
+                <label>
+                  <input type="radio" name="${nameImp}" value="${v}">
+                  <span class="checkmark"></span>
+                </label>
+              `).join('')}
             </div>
           </td>
           <td>
-            <div class="odi-scales">
-              ${[1,2,3,4,5].map(v=>`<label><input type=\"radio\" name=\"${nameSat}\" value=\"${v}\"><span></span></label>`).join('')}
+            <div class="radio-group">
+              ${[1,2,3,4,5].map(v=>`
+                <label>
+                  <input type="radio" name="${nameSat}" value="${v}">
+                  <span class="checkmark"></span>
+                </label>
+              `).join('')}
             </div>
           </td>`;
         tbody.appendChild(tr);
@@ -313,7 +356,12 @@
 
     function renderExtraScales(containerId){
       const el = document.getElementById(containerId);
-      el.innerHTML = [1,2,3,4,5].map(v=>`<label><input type=\"radio\" value=\"${v}\"><span>${v}</span></label>`).join('');
+      el.innerHTML = `<div class="radio-group">${[1,2,3,4,5].map(v=>`
+        <label>
+          <input type="radio" value="${v}">
+          <span class="checkmark"></span>
+        </label>
+      `).join('')}</div>`;
     }
 
     renderOdiRows('odi-gains','gains',GAINS);
@@ -430,4 +478,11 @@
         if(!res.ok) throw new Error('HTTP '+res.status);
         msg.textContent = 'Enviado com sucesso ✔';
         msg.className = 'hint';
-      }catch(err){ msg.textContent = 'Falha ao env
+      }catch(err){ msg.textContent = 'Falha ao enviar. Verifique o endpoint e tente novamente.'; }
+    });
+
+    // Init (começa direto)
+    showStep(0);
+  </script>
+</body>
+</html>
